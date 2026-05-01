@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id           String   @id @default(uuid())
+  serviceType  String
+  deadline     String
+  price        Int
+  status       String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, REVISION
+  
+  // Customer info
+  customerName String
+  customerWA   String
+  institution  String?
+  notes        String?
+  
+  // Files
+  files        String?  // JSON string or comma-separated URLs
+  resultFile   String?  // Final delivery file URL
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  category    String
+  price       Int
+  discount    Int?
+  description String   @db.Text
+  features    String?  // JSON string of features
+  imageUrl    String?
+  rating      Float    @default(0)
+  soldCount   Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id          String   @id @default(uuid())
+  name        String
+  institution String?
+  rating      Int      @default(5)
+  content     String   @db.Text
+  serviceType String?
+  imageUrl    String?
+  isApproved  Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FAQ {
+  id          String   @id @default(uuid())
+  question    String
+  answer      String   @db.Text
+  category    String
+  orderIndex  Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Setting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String   @db.Text
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
